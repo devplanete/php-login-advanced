@@ -1,16 +1,15 @@
 
-<?php
-// if you need the user's information, just put them into the $_SESSION variable and output them here
-echo WORDING_YOU_ARE_LOGGED_IN_AS . $_SESSION['user_name'] . "<br />";
-echo WORDING_PROFILE_PICTURE . '<br/><img src="' . $login->getGravatarImageUrl() . '" />';
-?>
+<fieldset>
+	<legend><?php echo WORDING_EDIT_USER_DATA; ?></legend>
+	<p><?php echo WORDING_YOU_ARE_LOGGED_IN_AS . '<b>' . $_SESSION['user_name']; ?></b></p><hr/>
 
-<div>
-	<a href="?logout"><?php echo WORDING_LOGOUT; ?></a>
-	<a href="?edit"><?php echo WORDING_EDIT_USER_DATA; ?></a>
+	<p>$_SESSION['user_id'] = <?php echo $_SESSION['user_id']; ?></p>
+	<p>$_SESSION['user_name'] = <?php echo $_SESSION['user_name']; ?></p>
+	<p>$_SESSION['user_email'] = <?php echo $_SESSION['user_email']; ?></p>
+	<p>$_SESSION['user_access_level'] = <?php echo $_SESSION['user_access_level']; ?></p>
+	<p>$_SESSION['user_logged_in'] = <?php echo $_SESSION['user_logged_in']; ?></p><hr/>
 
-	<?php
-	if (!USER_ALLOW_SELF_REGISTRATION && $_SESSION['user_is_admin'])
-		echo "<a href=\"?register\">" . WORDING_REGISTER_NEW_ACCOUNT_ADMIN . "</a>";
-	?>
-</div>
+	<p><?php echo WORDING_PROFILE_PICTURE . '<br/><img src="' . $login->getGravatarImageUrl() ; ?>" /></p>
+</fieldset><br/>
+<a href="?logout"><?php echo WORDING_LOGOUT; ?></a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="?edit"><?php echo WORDING_EDIT_USER_DATA; ?></a>
+<?php echo (ALLOW_ADMIN_TO_REGISTER_NEW_USER && $_SESSION['user_access_level'] == 255 ? '<br/><a href="?register">'. WORDING_REGISTER_NEW_ACCOUNT .'</a>' : ''); ?>

@@ -43,7 +43,7 @@ class Login
         @session_start();
 
         // if we have such a POST request, call the registerNewUser() method
-        if (isset($_POST["register"])) {
+        if (isset($_POST["register"]) && (ALLOW_USER_REGISTRATION || (ALLOW_ADMIN_TO_REGISTER_NEW_USER && $_SESSION['user_access_level'] == 255))) {
             $this->registerNewUser($_POST['user_name'], $_POST['user_email'], $_POST['user_password_new'], $_POST['user_password_repeat'], $_POST["captcha"]);
         // if we have such a GET request, call the verifyNewUser() method
         } else if (isset($_GET["id"]) && isset($_GET["verification_code"])) {
@@ -230,7 +230,7 @@ class Login
                 // cookie looks good, try to select corresponding user
                 if ($this->databaseConnection()) {
                     // get real token from database (and all other data)
-                    $sth = $this->db_connection->prepare("SELECT u.user_id, u.user_name, u.user_email, u.user_is_admin FROM user_connections uc 
+                    $sth = $this->db_connection->prepare("SELECT u.user_id, u.user_name, u.user_email, u.user_access_level FROM user_connections uc 
                                                           LEFT JOIN users u ON uc.user_id = u.user_id WHERE uc.user_id = :user_id
                                                           AND uc.user_rememberme_token = :user_rememberme_token AND uc.user_rememberme_token IS NOT NULL");
                     $sth->bindValue(':user_id', $user_id, PDO::PARAM_INT);
@@ -244,7 +244,7 @@ class Login
                         $_SESSION['user_id'] = $result_row->user_id;
                         $_SESSION['user_name'] = $result_row->user_name;
                         $_SESSION['user_email'] = $result_row->user_email;
-                        $_SESSION['user_is_admin'] = $result_row->user_is_admin;
+                        $_SESSION['user_access_level'] = $result_row->user_access_level;
                         $_SESSION['user_logged_in'] = 1;
 
                         // Cookie token usable only once
@@ -311,7 +311,7 @@ class Login
                 $_SESSION['user_id'] = $result_row->user_id;
                 $_SESSION['user_name'] = $result_row->user_name;
                 $_SESSION['user_email'] = $result_row->user_email;
-                $_SESSION['user_is_admin'] = $result_row->user_is_admin;
+                $_SESSION['user_access_level'] = $result_row->user_access_level;
                 $_SESSION['user_logged_in'] = 1;
 
                 // reset the failed login counter for that user
@@ -892,10 +892,6 @@ class Login
                 $this->messages[] = MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL;
             } else {
                 $this->errors[] = MESSAGE_REGISTRATION_ACTIVATION_NOT_SUCCESSFUL;
-
-                // check if self registration is disabled and user is not a logged in admin
-                if (!USER_ALLOW_SELF_REGISTRATION && !$_SESSION['user_is_admin'])
-                    exit(0);
             }
         }
     }

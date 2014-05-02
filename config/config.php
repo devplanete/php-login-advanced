@@ -112,6 +112,10 @@ define("EMAIL_VERIFICATION_CONTENT", "Please click on this link to activate your
 define("HASH_COST_FACTOR", "10");
 
 /**
- * Configuration for: user registration
+ * Configuration for: Registration
+ *
+ * ALLOW_USER_REGISTRATION: If set to false, new users cannot registred and registration link is not displayed.
+ * ALLOW_ADMIN_TO_REGISTER_NEW_USER: Administrator (user with an access level of 255) can create new users.
  */
-define("USER_ALLOW_SELF_REGISTRATION", true);
+define("ALLOW_USER_REGISTRATION", true);
+define("ALLOW_ADMIN_TO_REGISTER_NEW_USER", true);

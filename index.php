@@ -15,7 +15,8 @@ $login = new Login();
 include('views/_header.php');
 
 // show the registration form
-if (isset($_GET['register']) && ! $login->isRegistrationSuccessful()) {
+if (isset($_GET['register']) && ! $login->isRegistrationSuccessful() && 
+   (ALLOW_USER_REGISTRATION || (ALLOW_ADMIN_TO_REGISTER_NEW_USER && $_SESSION['user_access_level'] == 255))) {
     include('views/register.php');
 
 // show the request-a-password-reset or type-your-new-password form
