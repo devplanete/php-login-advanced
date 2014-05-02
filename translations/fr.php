@@ -74,7 +74,7 @@ define("WORDING_REGISTRATION_EMAIL", "E-mail (merci de fournir une adresse valid
 define("WORDING_REGISTRATION_PASSWORD", "Mot de passe (min. 6 caractères)");
 define("WORDING_REGISTRATION_PASSWORD_REPEAT", "Mot de passe repéter");
 define("WORDING_REGISTRATION_USERNAME", "Nom d'utilisateur (seulement des lettres et des chiffres, de 2 à 64 caractères)");
-define("WORDING_REMEMBER_ME", "Resté connecté");
+define("WORDING_REMEMBER_ME", "Rester connecté");
 define("WORDING_REQUEST_PASSWORD_RESET", "Démander la réinitialisation de mon mot de passe. Saisir votre nom d'utilisateur et vous recevrez un mail avec les instructions :");
 define("WORDING_RESET_PASSWORD", "Réinitialiser mon mot de passe");
 define("WORDING_SUBMIT_NEW_PASSWORD", "Soumettre le nouveau mot de passe");
