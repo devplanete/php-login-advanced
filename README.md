@@ -11,6 +11,8 @@ A simple, but secure PHP login script with many features includes :
 - "remember me" / stay logged in cookies
 - **"remember me" supports parallel login from multiple devices <- NEW**
 - **i18n/internationalization: English, French at the moment but it's easy to add a new language <- NEW**
+- **possibility to manage some user access levels <- NEW**
+- **a beautiful CSS style <-NEW**
 - gravatars
 
 IT stuffs...
@@ -19,6 +21,10 @@ IT stuffs...
 - Uses the ultra-modern & future-proof PHP 5.5.BLOWFISH hashing/salting functions (includes the official PHP 5.3 & PHP 5.4 compatibility pack, which makes those functions available in those versions too)
 
 You can also visit [Professional MVC Version](https://github.com/panique/php-login) if you look for a MVC Framework Version.
+
+## Screenshot
+
+![Example screenshot](https://cloud.githubusercontent.com/assets/5228432/2852514/5cdb4126-d136-11e3-802e-c3ade2455cb5.png)
 
 ## Live-demo
 
@@ -37,7 +43,7 @@ No live demo page available at the moment
 
 ## Installation (quick setup)
 
-* 1. create database *login* and table *users* via the SQL statements in the `_installation` folder.
+* 1. create database *login* and tables *users* and *user_connections* via the SQL statements in the `_installation` folder.
 * 2. in `config/config.php`, change mySQL user and password (*DB_USER* and *DB_PASS*).
 * 3. in `config/config.php`, change *COOKIE_DOMAIN* to your domain name (and don't forget to put the dot in front of the domain!)
 * 4. in `config/config.php`, change *COOKIE_SECRET_KEY* to a random string. this will make your cookies more secure
@@ -84,6 +90,7 @@ If you look into the code and at the file/folder-structure everything should be 
 ## Useful links
 
 - [How to use PDO](http://wiki.hashphp.org/PDO_Tutorial_for_MySQL_Developers)
+- [Why you Should be using PHP's PDO for Database Access](http://net.tutsplus.com/tutorials/php/why-you-should-be-using-phps-pdo-for-database-access)
 - [A little guideline on how to use the PHP 5.5 password hashing functions and its "library plugin" based PHP 5.3 & 5.4 implementation](http://www.dev-metal.com/use-php-5-5-password-hashing-functions/)
 - [How to setup latest version of PHP 5.5 on Ubuntu 12.04 LTS](http://www.dev-metal.com/how-to-setup-latest-version-of-php-5-5-on-ubuntu-12-04-lts/). Same for Debian 7.0 / 7.1:
 - [How to setup latest version of PHP 5.5 on Debian Wheezy 7.0/7.1 (and how to fix the GPG key error)](http://www.dev-metal.com/setup-latest-version-php-5-5-debian-wheezy-7-07-1-fix-gpg-key-error/)
