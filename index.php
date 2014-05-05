@@ -34,6 +34,10 @@ if (isset($_GET['register']) && ! $login->isRegistrationSuccessful() &&
 } else if (isset($_GET['edit']) && $login->isUserLoggedIn()) {
     include('views/edit.php');
 
+// show specified content/files
+} else if (isset($_GET['content']) && $login->isUserLoggedIn()) {
+    include('views/content.php');
+
 // the user is logged in, we show informations about the current user
 } else if ($login->isUserLoggedIn()) {
     include('views/logged_in.php');

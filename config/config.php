@@ -119,3 +119,12 @@ define("HASH_COST_FACTOR", "10");
  */
 define("ALLOW_USER_REGISTRATION", true);
 define("ALLOW_ADMIN_TO_REGISTER_NEW_USER", true);
+
+/**
+ * Configuration for: Content
+ *
+ * CONTENT_SHOW_FILES: If set to true, files to download will be listed on logged in page.
+ * CONTENT_DIRECTORY: Path where content/files reside. End with trailing "/".  Files need to have read, directories need to have read+execute.
+ */
+define("CONTENT_SHOW_FILES", false);
+define("CONTENT_DIRECTORY", "./content/");
