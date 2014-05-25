@@ -3,7 +3,7 @@
 	<legend><?php echo WORDING_LOGIN; ?></legend>
 	<form method="post" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>">
 		<label for="user_name"><?php echo WORDING_USERNAME; ?></label>
-		<input id="user_name" type="text" name="user_name" required />
+		<input id="user_name" type="text" name="user_name" required autofocus/>
 		<label for="user_password"><?php echo WORDING_PASSWORD; ?></label>
 		<input id="user_password" type="password" name="user_password" autocomplete="off" required /><br/>
 		<input type="checkbox" id="user_rememberme" name="user_rememberme" value="1" />

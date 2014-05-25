@@ -6,7 +6,7 @@
 		<input type='hidden' name='verification_code' value='<?php echo $_REQUEST['verification_code']; ?>' />
 
 		<label for="user_password_new"><?php echo WORDING_NEW_PASSWORD; ?></label>
-		<input id="user_password_new" type="password" name="user_password_new" pattern=".{6,}" required autocomplete="off" />
+		<input id="user_password_new" type="password" name="user_password_new" pattern=".{6,}" required autocomplete="off" autofocus/>
 
 		<label for="user_password_repeat"><?php echo WORDING_NEW_PASSWORD_REPEAT; ?></label>
 		<input id="user_password_repeat" type="password" name="user_password_repeat" pattern=".{6,}" required autocomplete="off" />
