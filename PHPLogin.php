@@ -795,84 +795,86 @@ class PHPLogin
      */
     private function registerNewUser($user_name, $user_email, $user_password, $user_password_repeat, $captcha)
     {
-        // prevent database flooding
-        $user_name = substr(trim($user_name), 0, 64);
-        $user_email = substr(trim($user_email), 0, 254);
-
-        // check provided data validity
-        if (strtolower($captcha) != strtolower($_SESSION['captcha'])) {
-            $this->errors[] = MESSAGE_CAPTCHA_WRONG;
-        } elseif (empty($user_name)) {
-            $this->errors[] = MESSAGE_USERNAME_EMPTY;
-        } elseif (empty($user_password) || empty($user_password_repeat)) {
-            $this->errors[] = MESSAGE_PASSWORD_EMPTY;
-        } elseif ($user_password !== $user_password_repeat) {
-            $this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
-        } elseif (strlen($user_password) < 6) {
-            $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
-        } elseif (strlen($user_name) > 64 || strlen($user_name) < 2) {
-            $this->errors[] = MESSAGE_USERNAME_BAD_LENGTH;
-        } elseif (!preg_match('/^[a-zA-Z0-9]{2,64}$/', $user_name)) {
-            $this->errors[] = MESSAGE_USERNAME_INVALID;
-        } elseif (empty($user_email)) {
-            $this->errors[] = MESSAGE_EMAIL_EMPTY;
-        } elseif (strlen($user_email) > 254) {
-            $this->errors[] = MESSAGE_EMAIL_TOO_LONG;
-        } elseif (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
-            $this->errors[] = MESSAGE_EMAIL_INVALID;
-
-        // finally if all the above checks are ok
-        } else {
-            // check if username already exists
-            $result_row = $this->getUserData($user_name);
-            // if this user exists
-            if (isset($result_row->user_id)) {
-                $this->errors[] = MESSAGE_USERNAME_EXISTS;
-                return;
-            // check if email already in use
+        if($this->databaseConnection()){
+            // prevent database flooding
+            $user_name = substr(trim($user_name), 0, 64);
+            $user_email = substr(trim($user_email), 0, 254);
+    
+            // check provided data validity
+            if (strtolower($captcha) != strtolower($_SESSION['captcha'])) {
+                $this->errors[] = MESSAGE_CAPTCHA_WRONG;
+            } elseif (empty($user_name)) {
+                $this->errors[] = MESSAGE_USERNAME_EMPTY;
+            } elseif (empty($user_password) || empty($user_password_repeat)) {
+                $this->errors[] = MESSAGE_PASSWORD_EMPTY;
+            } elseif ($user_password !== $user_password_repeat) {
+                $this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
+            } elseif (strlen($user_password) < 6) {
+                $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
+            } elseif (strlen($user_name) > 64 || strlen($user_name) < 2) {
+                $this->errors[] = MESSAGE_USERNAME_BAD_LENGTH;
+            } elseif (!preg_match('/^[a-zA-Z0-9]{2,64}$/', $user_name)) {
+                $this->errors[] = MESSAGE_USERNAME_INVALID;
+            } elseif (empty($user_email)) {
+                $this->errors[] = MESSAGE_EMAIL_EMPTY;
+            } elseif (strlen($user_email) > 254) {
+                $this->errors[] = MESSAGE_EMAIL_TOO_LONG;
+            } elseif (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+                $this->errors[] = MESSAGE_EMAIL_INVALID;
+    
+            // finally if all the above checks are ok
             } else {
-                $result_row = $this->getUserDataFromEmail($user_email);
-            }
-
-            // if email already in the database
-            if (isset($result_row->user_id)) {
-                $this->errors[] = MESSAGE_EMAIL_ALREADY_EXISTS;
-
-            // Ok user can be create
-            } else {
-                // crypt the user's password with the PHP 5.5's password_hash() function.
-                $user_password_hash = $this->getPasswordHash($user_password);
-                // generate random hash for email verification (40 char string)
-                $user_activation_hash = sha1(uniqid(mt_rand(), true));
-
-                // write new users data into database
-                $query_new_user_insert = $this->db_connection->prepare('INSERT INTO users (user_name, user_password_hash, user_email, user_activation_hash, user_registration_ip, user_registration_datetime) VALUES(:user_name, :user_password_hash, :user_email, :user_activation_hash, :user_registration_ip, now())');
-                $query_new_user_insert->bindValue(':user_name', $user_name, PDO::PARAM_STR);
-                $query_new_user_insert->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
-                $query_new_user_insert->bindValue(':user_email', $user_email, PDO::PARAM_STR);
-                $query_new_user_insert->bindValue(':user_activation_hash', $user_activation_hash, PDO::PARAM_STR);
-                $query_new_user_insert->bindValue(':user_registration_ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
-                $query_new_user_insert->execute();
-
-                // id of new user
-                $user_id = $this->db_connection->lastInsertId();
-
-                if ($query_new_user_insert) {
-                    // send a verification email
-                    if ($this->sendVerificationEmail($user_id, $user_email, $user_activation_hash)) {
-                        // when mail has been send successfully
-                        $this->messages[] = MESSAGE_VERIFICATION_MAIL_SENT;
-                        $this->registration_successful = true;
-                    } else {
-                        // delete this users account immediately, as we could not send a verification email
-                        $query_delete_user = $this->db_connection->prepare('DELETE FROM users WHERE user_id=:user_id');
-                        $query_delete_user->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-                        $query_delete_user->execute();
-
-                        $this->errors[] = MESSAGE_VERIFICATION_MAIL_ERROR;
-                    }
+                // check if username already exists
+                $result_row = $this->getUserData($user_name);
+                // if this user exists
+                if (isset($result_row->user_id)) {
+                    $this->errors[] = MESSAGE_USERNAME_EXISTS;
+                    return;
+                // check if email already in use
                 } else {
-                    $this->errors[] = MESSAGE_REGISTRATION_FAILED;
+                    $result_row = $this->getUserDataFromEmail($user_email);
+                }
+    
+                // if email already in the database
+                if (isset($result_row->user_id)) {
+                    $this->errors[] = MESSAGE_EMAIL_ALREADY_EXISTS;
+    
+                // Ok user can be create
+                } else {
+                    // crypt the user's password with the PHP 5.5's password_hash() function.
+                    $user_password_hash = $this->getPasswordHash($user_password);
+                    // generate random hash for email verification (40 char string)
+                    $user_activation_hash = sha1(uniqid(mt_rand(), true));
+    
+                    // write new users data into database
+                    $query_new_user_insert = $this->db_connection->prepare('INSERT INTO users (user_name, user_password_hash, user_email, user_activation_hash, user_registration_ip, user_registration_datetime) VALUES(:user_name, :user_password_hash, :user_email, :user_activation_hash, :user_registration_ip, now())');
+                    $query_new_user_insert->bindValue(':user_name', $user_name, PDO::PARAM_STR);
+                    $query_new_user_insert->bindValue(':user_password_hash', $user_password_hash, PDO::PARAM_STR);
+                    $query_new_user_insert->bindValue(':user_email', $user_email, PDO::PARAM_STR);
+                    $query_new_user_insert->bindValue(':user_activation_hash', $user_activation_hash, PDO::PARAM_STR);
+                    $query_new_user_insert->bindValue(':user_registration_ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+                    $query_new_user_insert->execute();
+    
+                    // id of new user
+                    $user_id = $this->db_connection->lastInsertId();
+    
+                    if ($query_new_user_insert) {
+                        // send a verification email
+                        if ($this->sendVerificationEmail($user_id, $user_email, $user_activation_hash)) {
+                            // when mail has been send successfully
+                            $this->messages[] = MESSAGE_VERIFICATION_MAIL_SENT;
+                            $this->registration_successful = true;
+                        } else {
+                            // delete this users account immediately, as we could not send a verification email
+                            $query_delete_user = $this->db_connection->prepare('DELETE FROM users WHERE user_id=:user_id');
+                            $query_delete_user->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+                            $query_delete_user->execute();
+    
+                            $this->errors[] = MESSAGE_VERIFICATION_MAIL_ERROR;
+                        }
+                    } else {
+                        $this->errors[] = MESSAGE_REGISTRATION_FAILED;
+                    }
                 }
             }
         }
