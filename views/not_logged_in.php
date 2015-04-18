@@ -11,7 +11,7 @@
     </div>
     <div class="form-group">
       <input type="checkbox" id="user_rememberme" name="user_rememberme" value="1" />
-      <label for="user_rememberme" style=" display:inline;" class="form-control"><?php echo WORDING_REMEMBER_ME; ?></label>
+      <label for="user_rememberme" style=" display:inline;"><?php echo WORDING_REMEMBER_ME; ?></label>
     </div>
     <div class="form-group">
       <input type="submit" name="login" value="<?php echo WORDING_LOGIN; ?>" class="btn btn-default"/>
