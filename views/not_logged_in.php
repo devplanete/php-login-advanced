@@ -1,4 +1,4 @@
-<div class="col-md-4">
+<div class="col-md-4 col-md-4-offset">
   <form method="post" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>">
     <fieldset>
       <legend><?php echo WORDING_LOGIN; ?></legend>
