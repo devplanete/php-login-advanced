@@ -1,15 +1,15 @@
 <?php
-/**
- * handles the user login/logout/session
- * @author devplanete (2013 - 2014)
- * @author Panique (2012 - 2013)
- * @link https://github.com/devplanete/php-login-advanced
- * @license http://opensource.org/licenses/MIT MIT License
- */
+
 namespace Login;
 use \PDO;
-class PHPLogin
-{
+class PHPLogin{
+	/**
+	 * handles the user login/logout/session
+	 * @author devplanete (2013 - 2014)
+	 * @author Panique (2012 - 2013)
+	 * @link https://github.com/devplanete/php-login-advanced
+	 * @license http://opensource.org/licenses/MIT MIT License
+	 */
     /**
      * @var object $db_connection The database connection
      */
@@ -34,7 +34,10 @@ class PHPLogin
      * @var array $messages Collection of success / neutral messages
      */
     public $messages = array();
-
+	/**
+	 * @var string the url for submitting captcha codes to
+	 */
+	public $captchaUrl = "https://www.google.com/recaptcha/api/siteverify";
     /**
      * the function "__construct()" automatically starts whenever an object of this class is created,
      * you know, when you do "$login = new PHPLogin();"
@@ -71,8 +74,9 @@ class PHPLogin
     private function ExecuteAction()
     {
         // if we have such a POST request, call the registerNewUser() method
-        if (isset($_POST["captcha"]) && isset($_POST["register"]) && (ALLOW_USER_REGISTRATION || (ALLOW_ADMIN_TO_REGISTER_NEW_USER && $_SESSION['user_access_level'] == 255))) {
-            $this->registerNewUser($_POST['user_name'], $_POST['user_email'], $_POST['user_password_new'], $_POST['user_password_repeat'], $_POST["captcha"]);
+        if (isset($_POST["g-recaptcha-response"]) && isset($_POST["register"]) && (ALLOW_USER_REGISTRATION || (ALLOW_ADMIN_TO_REGISTER_NEW_USER && $_SESSION['user_access_level'] == 255))) {
+           
+            $this->registerNewUser($_POST['user_name'], $_POST['user_email'], $_POST['user_password_new'], $_POST['user_password_repeat'], $_POST["g-recaptcha-response"]);
         // if we have such a GET request, call the verifyNewUser() method
         } else if (isset($_GET["id"]) && isset($_GET["verification_code"])) {
             $this->verifyNewUser($_GET["id"], $_GET["verification_code"]);
@@ -220,13 +224,13 @@ class PHPLogin
      */
     private function getPHPMailerObject()
     {
-        require_once(dirname( __FILE__ ).'../libraries/PHPMailer.php');
-        $mail = new Login\Mail\PHPMailer();
+        require_once(dirname( __FILE__ ).'/../classes/PHPMailer.php');
+        $mail = new Mail\PHPMailer();
 
         // please look into the config/config.php for much more info on how to use this!
         // use SMTP or use mail()
         if (EMAIL_USE_SMTP) {
-            require_once(dirname( __FILE__ ).'../libraries/SMTP.php');
+            require_once(dirname( __FILE__ ).'/../classes/SMTP.php');
             // Set mailer to use SMTP
             $mail->IsSMTP();
             //useful for debugging, shows full SMTP errors
@@ -791,7 +795,12 @@ class PHPLogin
             return '';
         }
     }
-
+     public function dd($d){
+  	echo '<pre>';
+  	var_dump($d);
+	echo '</pre>';
+	exit();
+  }
     /**
      * handles the entire registration process. checks all error possibilities, and creates a new user in the database if
      * everything is fine
@@ -803,26 +812,28 @@ class PHPLogin
         $user_email = substr(trim($user_email), 0, 254);
 
         // check provided data validity
-        if (strtolower($captcha) != strtolower($_SESSION['captcha'])) {
-            $this->errors[] = MESSAGE_CAPTCHA_WRONG;
+        if ($this->verifyCaptcha(['response'=>$captcha]) !== true) {
+            $this->dd($this->errors[] = MESSAGE_CAPTCHA_WRONG);
         } elseif (empty($user_name)) {
-            $this->errors[] = MESSAGE_USERNAME_EMPTY;
+            $this->dd($this->errors[] = MESSAGE_USERNAME_EMPTY);
         } elseif (empty($user_password) || empty($user_password_repeat)) {
-            $this->errors[] = MESSAGE_PASSWORD_EMPTY;
+            $this->dd($this->errors[] = MESSAGE_PASSWORD_EMPTY);
+            
         } elseif ($user_password !== $user_password_repeat) {
-            $this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
+            $this->dd($this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM);
+             
         } elseif (strlen($user_password) < 6) {
-            $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
+            $this->dd($this->errors[] = MESSAGE_PASSWORD_TOO_SHORT);
         } elseif (strlen($user_name) > 64 || strlen($user_name) < 2) {
-            $this->errors[] = MESSAGE_USERNAME_BAD_LENGTH;
+            $this->dd($this->errors[] = MESSAGE_USERNAME_BAD_LENGTH);
         } elseif (!preg_match('/^[a-zA-Z0-9]{2,64}$/', $user_name)) {
-            $this->errors[] = MESSAGE_USERNAME_INVALID;
+            $this->dd($this->errors[] = MESSAGE_USERNAME_INVALID);
         } elseif (empty($user_email)) {
-            $this->errors[] = MESSAGE_EMAIL_EMPTY;
+            $this->dd($this->errors[] = MESSAGE_EMAIL_EMPTY);
         } elseif (strlen($user_email) > 254) {
-            $this->errors[] = MESSAGE_EMAIL_TOO_LONG;
+            $this->dd($this->errors[] = MESSAGE_EMAIL_TOO_LONG);
         } elseif (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
-            $this->errors[] = MESSAGE_EMAIL_INVALID;
+            $this->dd($this->errors[] = MESSAGE_EMAIL_INVALID);
 
         // finally if all the above checks are ok
         } else {
@@ -830,7 +841,7 @@ class PHPLogin
             $result_row = $this->getUserData($user_name);
             // if this user exists
             if (isset($result_row->user_id)) {
-                $this->errors[] = MESSAGE_USERNAME_EXISTS;
+                $this->dd($this->errors[] = MESSAGE_USERNAME_EXISTS);
                 return;
             // check if email already in use
             } else {
@@ -839,7 +850,7 @@ class PHPLogin
 
             // if email already in the database
             if (isset($result_row->user_id)) {
-                $this->errors[] = MESSAGE_EMAIL_ALREADY_EXISTS;
+                $this->dd($this->errors[] = MESSAGE_EMAIL_ALREADY_EXISTS);
 
             // Ok user can be create
             } else {
@@ -894,7 +905,7 @@ class PHPLogin
         $mail->AddAddress($user_email);
         $mail->Subject = EMAIL_VERIFICATION_SUBJECT;
 
-        $link = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
+        $link = 'http://' . $_SERVER['HTTP_HOST'];
         $link .= '?id=' . urlencode($user_id) . '&verification_code=' . urlencode($user_activation_hash);
 
         // the link to your register.php, please set this value in config/email_verification.php
@@ -928,4 +939,27 @@ class PHPLogin
             }
         }
     }
+    public function verifyCaptcha(Array $s){
+      $string = 'secret='.RECAPTCHA_SECRETKEY;
+      $i=0;
+      foreach ($s as $k => $v){
+      	$string .= '&'.$k.'='.$v;
+      }
+     $ch = curl_init();
+	 $options = array(
+	    CURLOPT_URL=>$this->captchaUrl,
+	    CURLOPT_RETURNTRANSFER => true,
+	    CURLOPT_POSTFIELDS => ($string),
+	    CURLOPT_HEADER => false,
+	    CURLOPT_POST=>true
+	    //CURLOPT_HTTPHEADER => array('Content-Type:application/json')
+	    ); 
+	 if(count($options>0)){
+	     curl_setopt_array($ch, $options);
+	 }
+	 $json = curl_exec($ch);
+	 curl_close($ch);
+	 $json = json_decode($json);
+ 	 return $json->success == true || $json->success == 'true' || $json->success == 1 || $json->success == '1'? true: false;
+   }
 }

@@ -14,9 +14,9 @@
  * DB_PASS: the password of the above user
  */
 define("DB_HOST", "localhost");
-define("DB_NAME", "yourdb");
-define ( "DB_USER", "yourdbuser" );
-define ( "DB_PASS", "yourdbpass" );
+define("DB_NAME", "database_name");
+define ( "DB_USER", "database_user" );
+define ( "DB_PASS", "database_pass");
 
 /**
  * Configuration for: Cookies
@@ -51,6 +51,8 @@ define("COOKIE_SECRET_KEY", "1gp@TMPS{+$78sfpMJFe-92s");
  * Please note that there are several issues with gmail, like gmail will block your server
  * for "spam" reasons or you'll have a daily sending limit. See the readme.md for more info.
  *
+ * !!! Please check your your web server to make sure SMTP is not blocked! !!!
+ *
  * define("EMAIL_USE_SMTP", true);
  * define("EMAIL_SMTP_HOST", "ssl://smtp.gmail.com");
  * define("EMAIL_SMTP_AUTH", true);
@@ -63,17 +65,17 @@ define("COOKIE_SECRET_KEY", "1gp@TMPS{+$78sfpMJFe-92s");
  *
  */
 define("EMAIL_USE_SMTP", false);
-define("EMAIL_SMTP_HOST", "https://xxxxxx.com");
+define("EMAIL_SMTP_HOST", "http://xxxxxxx.com");
 define("EMAIL_SMTP_AUTH", true);
-define("EMAIL_SMTP_USERNAME", "xxxx@xxxxxx.com");
-define("EMAIL_SMTP_PASSWORD", "xxxxxx");
+define("EMAIL_SMTP_USERNAME", "xx@xxxxxxx.com");
+define("EMAIL_SMTP_PASSWORD", "xxxxxxxxxx");
 define("EMAIL_SMTP_PORT", 465);
 define("EMAIL_SMTP_ENCRYPTION", "ssl");
 
 /**
  * Configuration for: password reset email data
  */
-define("EMAIL_PASSWORDRESET_FROM", "xxxx@xxxxxx.com");
+define("EMAIL_PASSWORDRESET_FROM", "xx@xxxxxxx.com");
 define("EMAIL_PASSWORDRESET_FROM_NAME", "PHP-Login From xxxxxxx.com");
 define("EMAIL_PASSWORDRESET_SUBJECT", "Password reset for PROJECT XY");
 define("EMAIL_PASSWORDRESET_CONTENT", "Please click on this link to reset your password:");
@@ -81,7 +83,7 @@ define("EMAIL_PASSWORDRESET_CONTENT", "Please click on this link to reset your p
 /**
  * Configuration for: verification email data
  */
-define("EMAIL_VERIFICATION_FROM", "xxxx@xxxxxx.com");
+define("EMAIL_VERIFICATION_FROM", "xx@xxxxxxx.com");
 define("EMAIL_VERIFICATION_FROM_NAME", "PHP-Login From @xxxxxx.com");
 define("EMAIL_VERIFICATION_SUBJECT", "Account activation for PROJECT XY");
 define("EMAIL_VERIFICATION_CONTENT", "Please click on this link to activate your account:");
@@ -119,3 +121,13 @@ define("HASH_COST_FACTOR", "10");
  */
 define("ALLOW_USER_REGISTRATION", true);
 define("ALLOW_ADMIN_TO_REGISTER_NEW_USER", true);
+
+/**
+ * Configuration for: Google's Recaptcha
+ * 
+ * RECAPTCHA_SITEKEY: Your captcha site key
+ * RECAPTCHA_SECRETKEY: Your captcha secret key
+ */
+define("RECAPTCHA_SITEKEY", 'yourRecaptchaSiteKey');
+define("RECAPTCHA_SECRETKEY", 'yourRecaptchaSiteSecret');
+

@@ -6,6 +6,7 @@
  * @license http://opensource.org/licenses/MIT MIT License
  */
   $dir = dirname( __FILE__ );
+ 
 // Load application config (error reporting, database credentials etc.)
 require $dir . '/config/config.php';
 // The auto-loader to load the php-login related internal stuff automatically

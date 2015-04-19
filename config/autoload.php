@@ -7,7 +7,7 @@
  */
 function autoload($class) {
     // if file does not exist in LIBS_PATH folder [set it in config/config.php]
-    require dirname( __FILE__ ).'/../classes/PHPLogin.php';
+   // require dirname( __FILE__ ).'/../classes/PHPLogin.php';
 }
 // spl_autoload_register defines the function that is called every time a file is missing. as we created this
 // function above, every time a file is needed, autoload(THENEEDEDCLASS) is called
