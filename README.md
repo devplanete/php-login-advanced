@@ -108,7 +108,3 @@ Please commit only in *develop* branch. The *master* branch will always contain 
 If you think this script is useful and saves you a lot of work, then think about supporting the project:
 
 1. Contribute to this project. Feel free to improve this project with your skills.
-
-## Stats
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/panique/php-login-advanced/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
