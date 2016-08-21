@@ -1,5 +1,8 @@
 # CHANGE LOG
 
+**August 21th 2016**
+- add Romanian translation files
+
 **August 8th 2015**
 - add Italian translation files
 
